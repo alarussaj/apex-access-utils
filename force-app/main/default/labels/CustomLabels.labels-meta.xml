@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>AccessUtils_InsufficientFieldAccess</fullName>
+        <categories>apex-access-utils</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>AccessUtils Insufficient Field Access</shortDescription>
+        <value>Insufficient {0} access to the following fields on {1}: {2}.</value>
+    </labels>
+    <labels>
+        <fullName>AccessUtils_InsufficientObjectAccess</fullName>
+        <categories>apex-access-utils</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>AccessUtils Insufficient Object Access</shortDescription>
+        <value>Insufficient access to {0} {1} records: {2}</value>
+    </labels>
+</CustomLabels>
