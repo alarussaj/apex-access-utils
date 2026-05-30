@@ -7,7 +7,7 @@ This guide walks through installing `apex-access-utils` and using it in the most
 Install the latest unlocked package version from the [Releases page](https://github.com/alarussaj/apex-access-utils/releases).
 
 ```bash
-sf package install --package <PACKAGE_VERSION_ID> --target-org <your-org-alias> --wait 10
+sf package install --package 04tg50000008D3JAAU --target-org <your-org-alias> --wait 10
 ```
 
 Or via the browser using the install URL from the release.
