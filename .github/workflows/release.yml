@@ -1,0 +1,103 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create unlocked package version & GitHub release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Salesforce CLI
+        run: |
+          npm install --global @salesforce/cli@latest
+          sf --version
+
+      - name: Authenticate Dev Hub
+        run: |
+          echo "${{ secrets.SF_DEVHUB_AUTH_URL }}" > ./DEVHUB_AUTH_URL.txt
+          sf org login sfdx-url --sfdx-url-file ./DEVHUB_AUTH_URL.txt --alias DevHub --set-default-dev-hub
+          rm -f ./DEVHUB_AUTH_URL.txt
+
+      - name: Create package version
+        id: createPackage
+        run: |
+          set -o pipefail
+          sf package version create \
+            --package "apex-access-utils" \
+            --installation-key-bypass \
+            --wait 30 \
+            --code-coverage \
+            --target-dev-hub DevHub \
+            --json | tee version-create.json
+
+          SUBSCRIBER_ID=$(jq -r '.result.SubscriberPackageVersionId' version-create.json)
+          echo "subscriber_id=${SUBSCRIBER_ID}" >> "$GITHUB_OUTPUT"
+          echo "Created package version: ${SUBSCRIBER_ID}"
+
+      - name: Promote package version
+        run: |
+          sf package version promote \
+            --package "${{ steps.createPackage.outputs.subscriber_id }}" \
+            --target-dev-hub DevHub \
+            --no-prompt
+
+      - name: Delete existing release for tag (prevents draft collision)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete "${{ github.ref_name }}" --yes --cleanup-tag=false 2>/dev/null || true
+
+      - name: Build release notes
+        id: notes
+        run: |
+          SUBSCRIBER_ID="${{ steps.createPackage.outputs.subscriber_id }}"
+          {
+            echo "RELEASE_BODY<<EOF"
+            echo "## ${{ github.ref_name }}"
+            echo ""
+            echo "Unlocked package release of apex-access-utils."
+            echo ""
+            echo "### Install URL"
+            echo ""
+            echo "**Production / Developer Edition:**"
+            echo ""
+            echo '```'
+            echo "https://login.salesforce.com/packaging/installPackage.apexp?p0=${SUBSCRIBER_ID}"
+            echo '```'
+            echo ""
+            echo "**Sandbox:**"
+            echo ""
+            echo '```'
+            echo "https://test.salesforce.com/packaging/installPackage.apexp?p0=${SUBSCRIBER_ID}"
+            echo '```'
+            echo ""
+            echo "### SFDX Install"
+            echo ""
+            echo '```bash'
+            echo "sf package install --package ${SUBSCRIBER_ID} --target-org <your-org-alias> --wait 10"
+            echo '```'
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body: ${{ steps.notes.outputs.RELEASE_BODY }}
+          prerelease: false
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

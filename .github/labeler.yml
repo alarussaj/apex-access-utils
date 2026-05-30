@@ -1,0 +1,21 @@
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "**/*.md"
+
+github-actions:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/workflows/**"
+
+apex:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "force-app/**/*.cls"
+          - "force-app/**/*.cls-meta.xml"
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "force-app/**/*_Test.cls"
