@@ -4,7 +4,7 @@
       "versionName": "ver 0.1",
       "versionNumber": "0.1.0.NEXT",
       "path": "force-app",
-      "default": false,
+      "default": true,
       "package": "apex-access-utils",
       "versionDescription": ""
     }
@@ -14,6 +14,7 @@
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "64.0",
   "packageAliases": {
-    "apex-access-utils": "0Hog50000000jrZCAQ"
+    "apex-access-utils": "0Hog50000000jrZCAQ",
+    "apex-access-utils@0.1.0-1": "04tg50000008D3JAAU"
   }
 }
