@@ -15,6 +15,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  static-analysis:
+    name: PMD Static Analysis
+    runs-on: ubuntu-latest
+    # Runs for all PRs (including dependabot) — PMD needs no secrets.
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run PMD
+        uses: pmd/pmd-github-action@v2
+        with:
+          version: "7.7.0"
+          sourcePath: "force-app"
+          rulesets: "pmd-ruleset.xml"
+          analyzeModifiedFilesOnly: false
+
   validate:
     name: Deploy & Test on Scratch Org
     runs-on: ubuntu-latest

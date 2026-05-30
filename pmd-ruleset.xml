@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd"
+    name="apex-access-utils"
+>
+    <description>PMD ruleset for apex-access-utils.</description>
+
+    <!-- Best Practices -->
+    <rule ref="category/apex/bestpractices.xml">
+        <exclude name="ApexUnitTestClassShouldHaveAsserts" />
+        <exclude name="ApexUnitTestMethodShouldHaveIsTestAnnotation" />
+    </rule>
+
+    <!-- Re-add ApexUnitTestClassShouldHaveAsserts with a relaxed config that
+         recognizes Assert.* methods and allows suppression on helper classes -->
+    <rule
+        ref="category/apex/bestpractices.xml/ApexUnitTestClassShouldHaveAsserts"
+        message="Apex unit test classes should have at least one System.assert() or Assert method call"
+    >
+        <priority>3</priority>
+        <properties>
+            <property
+                name="additionalAssertMethodPattern"
+                value="(?:Assert|Asserts|verify)\w*\.\w+"
+            />
+        </properties>
+    </rule>
+
+    <!-- Code Style -->
+    <rule ref="category/apex/codestyle.xml">
+        <!-- We use our own naming conventions; these defaults are too strict -->
+        <exclude name="FieldNamingConventions" />
+        <exclude name="FormalParameterNamingConventions" />
+        <exclude name="LocalVariableNamingConventions" />
+        <exclude name="PropertyNamingConventions" />
+    </rule>
+
+    <!-- Design -->
+    <rule ref="category/apex/design.xml">
+        <exclude name="ExcessivePublicCount" />
+        <exclude name="CognitiveComplexity" />
+    </rule>
+
+    <!-- Documentation -->
+    <rule ref="category/apex/documentation.xml/ApexDoc">
+        <priority>3</priority>
+        <properties>
+            <property name="reportPrivate" value="false" />
+            <property name="reportProtected" value="false" />
+            <property name="reportMissingDescription" value="true" />
+        </properties>
+    </rule>
+
+    <!-- Error Prone -->
+    <rule ref="category/apex/errorprone.xml">
+        <exclude name="ApexCSRF" />
+    </rule>
+
+    <!-- Performance -->
+    <rule ref="category/apex/performance.xml" />
+
+    <!-- Security -->
+    <rule ref="category/apex/security.xml" />
+</ruleset>
