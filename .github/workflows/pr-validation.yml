@@ -1,0 +1,62 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+# Cancel superseded runs on the same PR
+concurrency:
+  group: pr-validation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Deploy & Test on Scratch Org
+    runs-on: ubuntu-latest
+    # Skip for dependabot — it doesn't have access to secrets
+    if: github.actor != 'dependabot[bot]'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Salesforce CLI
+        run: |
+          npm install --global @salesforce/cli@latest
+          sf --version
+
+      - name: Authenticate Dev Hub
+        run: |
+          echo "${{ secrets.SF_DEVHUB_AUTH_URL }}" > ./DEVHUB_AUTH_URL.txt
+          sf org login sfdx-url --sfdx-url-file ./DEVHUB_AUTH_URL.txt --alias DevHub --set-default-dev-hub
+          rm -f ./DEVHUB_AUTH_URL.txt
+
+      - name: Create scratch org
+        run: |
+          sf org create scratch \
+            --definition-file config/project-scratch-def.json \
+            --alias ciScratch \
+            --duration-days 1 \
+            --set-default \
+            --wait 10
+
+      - name: Deploy source
+        run: sf project deploy start --source-dir force-app --target-org ciScratch
+
+      - name: Run Apex tests
+        run: |
+          sf apex run test \
+            --target-org ciScratch \
+            --code-coverage \
+            --result-format human \
+            --wait 20 \
+            --test-level RunLocalTests
+
+      - name: Delete scratch org
+        if: always()
+        run: sf org delete scratch --target-org ciScratch --no-prompt || true
