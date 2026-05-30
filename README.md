@@ -32,19 +32,19 @@ Install the latest unlocked package:
 **Production / Developer Edition:**
 
 ```
-https://login.salesforce.com/packaging/installPackage.apexp?p0=<PACKAGE_VERSION_ID>
+https://login.salesforce.com/packaging/installPackage.apexp?p0=04tg50000008D3JAAU
 ```
 
 **Sandbox:**
 
 ```
-https://test.salesforce.com/packaging/installPackage.apexp?p0=<PACKAGE_VERSION_ID>
+https://test.salesforce.com/packaging/installPackage.apexp?p0=04tg50000008D3JAAU
 ```
 
 **SFDX:**
 
 ```bash
-sf package install --package <PACKAGE_VERSION_ID> --target-org <your-org-alias> --wait 10
+sf package install --package 04tg50000008D3JAAU --target-org <your-org-alias> --wait 10
 ```
 
 See the [Releases page](https://github.com/alarussaj/apex-access-utils/releases) for the latest package version ID.
