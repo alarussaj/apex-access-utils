@@ -1,14 +1,17 @@
-# List files or directories below to ignore them when running force:source:push, force:source:pull, and force:source:status
-# More information: https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_exclude_source.htm
-#
+# Exclude example classes from package deployment.
+# These are documentation only and reference fictional objects/loggers;
+# they should never be deployed to a scratch org or packaged.
+docs/
 
-package.xml
-
-# LWC configuration files
+# Standard SFDX excludes
 **/jsconfig.json
 **/.eslintrc.json
+**/.prettierrc
+**/.prettierignore
 
-# LWC Jest
-**/__tests__/**
+# Profiles and settings that shouldn't be packaged
+**/profiles/**
+**/settings/**
 
-node_modules/
+# Metadata that commonly causes deploy noise
+package.xml
