@@ -1,76 +1,89 @@
 # Contributing
 
-Thanks for your interest in `apex-access-utils`. This document describes how to set up your local environment, the standards the codebase follows, and the process for submitting changes.
+Thanks for considering a contribution to **apex-access-utils**. This document describes how to set up your local environment, the standards the codebase follows, and the process for submitting changes.
 
 ## Development setup
 
-Prerequisites:
+You'll need:
 
-- A Salesforce Dev Hub (production or developer edition org with Dev Hub enabled)
-- [Salesforce CLI](https://developer.salesforce.com/tools/sfdxcli) (`sf` command)
-- Node.js 18+ (for Prettier and lint-staged)
-- Git
+- [Node.js](https://nodejs.org/) 22.22.1 or later
+- [Salesforce CLI](https://developer.salesforce.com/tools/sfdxcli) (`sf`)
+- A Salesforce **Dev Hub** org (a free [Developer Edition](https://developer.salesforce.com/signup) works)
 
-Clone the repo:
+### One-time setup
 
 ```bash
+# Clone the repo
 git clone https://github.com/alarussaj/apex-access-utils.git
 cd apex-access-utils
-```
 
-Install Node tooling (Husky, lint-staged, Prettier):
-
-```bash
+# Install Node dependencies (Prettier, Husky, lint-staged)
 npm install
+
+# Authorize your Dev Hub
+sf org login web --set-default-dev-hub --alias DevHub
 ```
 
-Authenticate your Dev Hub:
+### Running tests locally
 
 ```bash
-sf org login web --alias DevHub --set-default-dev-hub
+# Create a scratch org
+sf org create scratch --definition-file config/project-scratch-def.json --alias aau-scratch --set-default --duration-days 7
+
+# Deploy the source
+sf project deploy start --source-dir force-app --target-org aau-scratch
+
+# Run the tests
+sf apex run test --target-org aau-scratch --tests AccessUtils_Test --code-coverage --result-format human --wait 10
 ```
 
-Create a scratch org and deploy:
+### Formatting
+
+This project uses [Prettier](https://prettier.io/) with [`prettier-plugin-apex`](https://github.com/dangmai/prettier-plugin-apex).
 
 ```bash
-sf org create scratch \
-    --definition-file config/project-scratch-def.json \
-    --alias AauDev \
-    --duration-days 7 \
-    --set-default
+# Format all files
+npm run format
 
-sf project deploy start --source-dir force-app --target-org AauDev
+# Check formatting without changing files (matches CI)
+npm run format:check
 ```
 
-Run the tests:
+CI will reject pull requests with unformatted files. Run `npm run format` before pushing.
+
+### Static analysis (PMD)
+
+The project uses a custom PMD ruleset (see `pmd-ruleset.xml`). PMD runs in CI on every pull request.
+
+To run PMD locally:
 
 ```bash
-sf apex run test --target-org AauDev --tests AccessUtils_Test --result-format human --wait 10
+# Download PMD if you haven't already (https://pmd.github.io/)
+pmd check -d force-app -R pmd-ruleset.xml -f text
 ```
+
+## Pull request process
+
+1. **Open an issue first** for non-trivial changes. Discussion before code saves everyone time.
+2. **Fork** the repo and create a feature branch from `main`. Branch names follow `<type>/<short-description>`, where `<type>` matches Conventional Commits prefixes (`feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `ci`, etc.).
+3. **Make your changes** with tests covering new behavior.
+4. **Run formatting and tests** locally before pushing.
+5. **Open a pull request** against `main`. Fill in the PR template. The PR title must follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) — it becomes the squash-commit message on `main`.
+6. **CI must pass** — PR title check, Prettier, PMD, scratch org deploy, and all Apex tests.
+7. **Wait for review.**
 
 ## Coding standards
 
-- **Apex**: API version 64.0. Use `inherited sharing` on all production classes unless there's a specific reason not to.
-- **ApexDoc**: every public class and method has `@description`, `@param` for each parameter, `@return` for non-void methods, and `@throws` where applicable. Test methods are exempt from `@description` per the PMD `ApexUnitTestClassShouldHaveAsserts` exemption.
+- **Visibility / sharing**: production classes use `inherited sharing` unless there's a specific reason not to.
+- **ApexDoc**: every public class and method has `@description`, `@param`, `@return`, and `@throws` tags as appropriate. Test methods are exempt from `@description`.
 - **Test annotations**: use `@IsTest` with capital I/T, not `@isTest`.
+- **Tests**: use the `Assert` class (not `System.assert`). Every assertion has a descriptive message. Test methods follow `shouldDoThingWhenCondition` naming. Use `// Arrange`, `// Act`, `// Assert` block comments where they aid readability.
 - **Variable naming**: avoid case-insensitive collisions with Schema namespace identifiers. Use `acct` instead of `account`, `requestedAccess` instead of `accessType`, etc.
-- **Formatting**: enforced via Prettier (`prettier-plugin-apex`). Run `npm run format` before committing.
-- **Static analysis**: enforced via PMD. The ruleset is at `pmd-ruleset.xml`.
-
-## Submitting changes
-
-1. **Open an issue first** for non-trivial changes. Discussion before code saves everyone time.
-2. **Fork and branch**: branch names should follow `<type>/<short-description>`, where `<type>` matches Conventional Commits prefixes (`feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `ci`, etc.).
-3. **Commit messages**: follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). The PR title becomes the squash-commit message, so the same convention applies there.
-4. **Tests**: every code change must be accompanied by tests. Bug fixes should include a regression test.
-5. **PR validation**: the `pr-validation` GitHub Action will deploy your branch to a scratch org and run all tests. PRs cannot merge until it passes.
-6. **Documentation**: if your change affects the public API, update the relevant `docs/` files and the `CHANGELOG.md` under `[Unreleased]`.
+- **No empty lines inside method bodies.** If a separation is meaningful, add a comment explaining why.
 
 ## Release process
 
 Releases are tag-driven and automated by the `release` GitHub Action.
-
-To cut a release:
 
 1. Ensure `main` is green and contains everything to be released.
 2. Update `CHANGELOG.md`: move items from `[Unreleased]` into a new version section.
@@ -87,6 +100,10 @@ To cut a release:
 
 6. The release workflow creates the unlocked package version, promotes it, and publishes a GitHub release.
 
+## Versioning
+
+This project uses [Semantic Versioning](https://semver.org/). Releases are tagged `vMAJOR.MINOR.PATCH`. Pre-1.0 releases (0.x.y) are considered unstable; minor versions may include breaking changes.
+
 ## Code of Conduct
 
-By contributing to this project, you agree to abide by its [Code of Conduct](CODE_OF_CONDUCT.md).
+By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).

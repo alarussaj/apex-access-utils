@@ -1,40 +1,51 @@
-name-template: "v$RESOLVED_VERSION"
-tag-template: "v$RESOLVED_VERSION"
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
 
 categories:
-  - title: "Features"
+  - title: '⚠️ Breaking Changes'
     labels:
-      - "feature"
-      - "enhancement"
-  - title: "Bug Fixes"
+      - 'breaking'
+      - 'breaking-change'
+  - title: '🚀 Features'
     labels:
-      - "fix"
-      - "bug"
-  - title: "Documentation"
+      - 'enhancement'
+      - 'feature'
+  - title: '🐛 Bug Fixes'
     labels:
-      - "documentation"
-  - title: "Maintenance"
+      - 'bug'
+      - 'fix'
+  - title: '📚 Documentation'
     labels:
-      - "chore"
-      - "dependencies"
+      - 'documentation'
+      - 'docs'
+  - title: '🧰 Maintenance'
+    labels:
+      - 'chore'
+      - 'maintenance'
+      - 'refactor'
+      - 'dependencies'
 
-change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 change-title-escapes: '\<*_&'
 
 version-resolver:
   major:
     labels:
-      - "major"
+      - 'breaking'
+      - 'breaking-change'
   minor:
     labels:
-      - "minor"
-      - "feature"
-      - "enhancement"
+      - 'enhancement'
+      - 'feature'
   patch:
     labels:
-      - "patch"
-      - "fix"
-      - "bug"
+      - 'bug'
+      - 'fix'
+      - 'documentation'
+      - 'chore'
+      - 'maintenance'
+      - 'refactor'
+      - 'dependencies'
   default: patch
 
 template: |

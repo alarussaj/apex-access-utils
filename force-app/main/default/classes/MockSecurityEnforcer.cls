@@ -131,11 +131,7 @@ public class MockSecurityEnforcer implements ISecurityEnforcer {
 	 * @description Asserts the mock was called exactly once.
 	 */
 	public void verifyCalledOnce() {
-		Assert.areEqual(
-			1,
-			callCount,
-			'Expected stripInaccessible to be called exactly once, was called ' + callCount
-		);
+		Assert.areEqual(1, callCount, 'Expected stripInaccessible to be called exactly once, was called ' + callCount);
 	}
 
 	/**

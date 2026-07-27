@@ -66,7 +66,7 @@ List<SObject> safe = AccessUtils.checkRecordAccess(
 
 ## Step 4: Pre-flight object checks
 
-`checkRecordAccess` works on records you've already queried. Sometimes you need to check access *before* building a query — for example, to fail fast or to branch logic. Use `hasObjectAccess`:
+`checkRecordAccess` works on records you've already queried. Sometimes you need to check access _before_ building a query — for example, to fail fast or to branch logic. Use `hasObjectAccess`:
 
 ```apex
 if (!AccessUtils.hasObjectAccess(Account.SObjectType, AccessType.READABLE)) {

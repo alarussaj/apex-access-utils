@@ -1,21 +1,31 @@
-documentation:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "docs/**"
-          - "**/*.md"
-
-github-actions:
-  - changed-files:
-      - any-glob-to-any-file:
-          - ".github/workflows/**"
-
 apex:
   - changed-files:
-      - any-glob-to-any-file:
-          - "force-app/**/*.cls"
-          - "force-app/**/*.cls-meta.xml"
+      - any-glob-to-any-file: 'force-app/**/*.cls'
+      - any-glob-to-any-file: 'force-app/**/*.cls-meta.xml'
 
 tests:
   - changed-files:
-      - any-glob-to-any-file:
-          - "force-app/**/*_Test.cls"
+      - any-glob-to-any-file: 'force-app/**/*_Test.cls'
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: '.github/workflows/**'
+      - any-glob-to-any-file: '.github/dependabot.yml'
+      - any-glob-to-any-file: 'pmd-ruleset.xml'
+      - any-glob-to-any-file: 'codecov.yml'
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: 'README.md'
+      - any-glob-to-any-file: 'docs/**'
+      - any-glob-to-any-file: 'CHANGELOG.md'
+      - any-glob-to-any-file: 'CONTRIBUTING.md'
+
+config:
+  - changed-files:
+      - any-glob-to-any-file: 'package.json'
+      - any-glob-to-any-file: 'package-lock.json'
+      - any-glob-to-any-file: 'sfdx-project.json'
+      - any-glob-to-any-file: '.prettierrc'
+      - any-glob-to-any-file: '.gitignore'
+      - any-glob-to-any-file: '.forceignore'

@@ -13,8 +13,6 @@
         <exclude name="ApexUnitTestMethodShouldHaveIsTestAnnotation" />
     </rule>
 
-    <!-- Re-add ApexUnitTestClassShouldHaveAsserts with a relaxed config that
-         recognizes Assert.* methods and allows suppression on helper classes -->
     <rule
         ref="category/apex/bestpractices.xml/ApexUnitTestClassShouldHaveAsserts"
         message="Apex unit test classes should have at least one System.assert() or Assert method call"
@@ -30,7 +28,6 @@
 
     <!-- Code Style -->
     <rule ref="category/apex/codestyle.xml">
-        <!-- We use our own naming conventions; these defaults are too strict -->
         <exclude name="FieldNamingConventions" />
         <exclude name="FormalParameterNamingConventions" />
         <exclude name="LocalVariableNamingConventions" />

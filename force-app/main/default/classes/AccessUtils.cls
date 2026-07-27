@@ -128,7 +128,9 @@ public inherited sharing class AccessUtils {
 					options.logger.logStrippedFields(decision.getRemovedFields(), requestedAccess);
 				}
 				if (options.mode == AccessOptions.Mode.STRICT) {
-					throw new AccessUtilsException(buildFieldErrorMessage(decision.getRemovedFields(), requestedAccess));
+					throw new AccessUtilsException(
+						buildFieldErrorMessage(decision.getRemovedFields(), requestedAccess)
+					);
 				}
 			}
 

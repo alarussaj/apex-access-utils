@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*.*.*"
+      - 'v*.*.*'
 
 permissions:
   contents: write
@@ -19,37 +19,87 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.1'
       - name: Install Salesforce CLI
         run: |
           npm install --global @salesforce/cli@latest
           sf --version
 
-      - name: Authenticate Dev Hub
+      - name: Authenticate to Dev Hub
+        env:
+          SF_DEVHUB_AUTH_URL: ${{ secrets.SF_DEVHUB_AUTH_URL }}
+        shell: bash
         run: |
-          echo "${{ secrets.SF_DEVHUB_AUTH_URL }}" > ./DEVHUB_AUTH_URL.txt
-          sf org login sfdx-url --sfdx-url-file ./DEVHUB_AUTH_URL.txt --alias DevHub --set-default-dev-hub
-          rm -f ./DEVHUB_AUTH_URL.txt
+          set -e
+          if [ -z "$SF_DEVHUB_AUTH_URL" ]; then
+            echo "::error::SF_DEVHUB_AUTH_URL secret is not set. See CONTRIBUTING.md for setup."
+            exit 1
+          fi
+          printf '%s' "$SF_DEVHUB_AUTH_URL" > /tmp/devhub-auth.txt
+          sf org login sfdx-url --sfdx-url-file /tmp/devhub-auth.txt --alias DevHub --set-default-dev-hub
+          rm -f /tmp/devhub-auth.txt
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Releasing version: $VERSION"
 
       - name: Create package version
-        id: createPackage
+        id: package
         run: |
-          set -o pipefail
-          sf package version create \
+          set -eo pipefail
+          echo "::group::Running sf package version create"
+          if sf package version create \
             --package "apex-access-utils" \
             --installation-key-bypass \
             --wait 30 \
             --code-coverage \
             --target-dev-hub DevHub \
-            --json | tee version-create.json
+            --json > /tmp/sf-stdout.json 2> /tmp/sf-stderr.log; then
+            SF_EXIT_CODE=0
+          else
+            SF_EXIT_CODE=$?
+          fi
+          echo "::endgroup::"
 
-          SUBSCRIBER_ID=$(jq -r '.result.SubscriberPackageVersionId' version-create.json)
-          echo "subscriber_id=${SUBSCRIBER_ID}" >> "$GITHUB_OUTPUT"
-          echo "Created package version: ${SUBSCRIBER_ID}"
+          echo "::group::sf stdout"
+          cat /tmp/sf-stdout.json
+          echo "::endgroup::"
+
+          if [ -s /tmp/sf-stderr.log ]; then
+            echo "::group::sf stderr"
+            cat /tmp/sf-stderr.log
+            echo "::endgroup::"
+          fi
+
+          if [ "$SF_EXIT_CODE" -ne 0 ]; then
+            echo "::error::sf package version create exited with code $SF_EXIT_CODE"
+            exit "$SF_EXIT_CODE"
+          fi
+
+          if PACKAGE_VERSION_ID=$(jq -r '.result.SubscriberPackageVersionId // empty' /tmp/sf-stdout.json 2>/tmp/jq-stderr.log); then
+            if [ -z "$PACKAGE_VERSION_ID" ]; then
+              echo "::error::sf succeeded but no SubscriberPackageVersionId in output"
+              exit 1
+            fi
+          else
+            echo "::error::Failed to parse sf output as JSON. jq stderr:"
+            cat /tmp/jq-stderr.log
+            exit 1
+          fi
+
+          echo "package_version_id=$PACKAGE_VERSION_ID" >> "$GITHUB_OUTPUT"
+          echo "::notice::Package Version Id: $PACKAGE_VERSION_ID"
 
       - name: Promote package version
         run: |
           sf package version promote \
-            --package "${{ steps.createPackage.outputs.subscriber_id }}" \
+            --package "${{ steps.package.outputs.package_version_id }}" \
             --target-dev-hub DevHub \
             --no-prompt
 
@@ -59,45 +109,44 @@ jobs:
         run: |
           gh release delete "${{ github.ref_name }}" --yes --cleanup-tag=false 2>/dev/null || true
 
-      - name: Build release notes
-        id: notes
-        run: |
-          SUBSCRIBER_ID="${{ steps.createPackage.outputs.subscriber_id }}"
-          {
-            echo "RELEASE_BODY<<EOF"
-            echo "## ${{ github.ref_name }}"
-            echo ""
-            echo "Unlocked package release of apex-access-utils."
-            echo ""
-            echo "### Install URL"
-            echo ""
-            echo "**Production / Developer Edition:**"
-            echo ""
-            echo '```'
-            echo "https://login.salesforce.com/packaging/installPackage.apexp?p0=${SUBSCRIBER_ID}"
-            echo '```'
-            echo ""
-            echo "**Sandbox:**"
-            echo ""
-            echo '```'
-            echo "https://test.salesforce.com/packaging/installPackage.apexp?p0=${SUBSCRIBER_ID}"
-            echo '```'
-            echo ""
-            echo "### SFDX Install"
-            echo ""
-            echo '```bash'
-            echo "sf package install --package ${SUBSCRIBER_ID} --target-org <your-org-alias> --wait 10"
-            echo '```'
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+      - name: Generate release notes
+        id: release_notes
+        uses: release-drafter/release-drafter@v6
+        with:
+          version: ${{ steps.version.outputs.version }}
+          tag: ${{ github.ref_name }}
+          publish: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
-          body: ${{ steps.notes.outputs.RELEASE_BODY }}
-          prerelease: false
+          body: |
+            ${{ steps.release_notes.outputs.body }}
+
+            ---
+
+            ### Install URL
+
+            **Production / Developer Edition:**
+            ```
+            https://login.salesforce.com/packaging/installPackage.apexp?p0=${{ steps.package.outputs.package_version_id }}
+            ```
+
+            **Sandbox:**
+            ```
+            https://test.salesforce.com/packaging/installPackage.apexp?p0=${{ steps.package.outputs.package_version_id }}
+            ```
+
+            ### SFDX Install
+
+            ```bash
+            sf package install --package ${{ steps.package.outputs.package_version_id }} --target-org <your-org-alias> --wait 10
+            ```
+          prerelease: ${{ startsWith(steps.version.outputs.version, '0.') }}
           draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -91,21 +91,21 @@ List<Account> accounts = [SELECT Id, Name FROM Account];
 
 ### `AccessUtils`
 
-| Method | Purpose |
-|---|---|
-| `checkRecordAccess(SObject, AccessType)` | Strict-mode single-record check |
-| `checkRecordAccess(SObject, AccessType, AccessOptions)` | Single-record check with options |
-| `checkRecordAccess(List<SObject>, AccessType)` | Strict-mode bulk check |
-| `checkRecordAccess(List<SObject>, AccessType, AccessOptions)` | Bulk check with options |
-| `hasObjectAccess(SObjectType, AccessType)` | Pre-flight object-level check |
+| Method                                                        | Purpose                          |
+| ------------------------------------------------------------- | -------------------------------- |
+| `checkRecordAccess(SObject, AccessType)`                      | Strict-mode single-record check  |
+| `checkRecordAccess(SObject, AccessType, AccessOptions)`       | Single-record check with options |
+| `checkRecordAccess(List<SObject>, AccessType)`                | Strict-mode bulk check           |
+| `checkRecordAccess(List<SObject>, AccessType, AccessOptions)` | Bulk check with options          |
+| `hasObjectAccess(SObjectType, AccessType)`                    | Pre-flight object-level check    |
 
 ### `AccessOptions`
 
-| Method | Purpose |
-|---|---|
-| `AccessOptions.strict()` | Factory for strict-mode options |
-| `AccessOptions.silent()` | Factory for silent-mode options |
-| `withLogger(IAccessLogger)` | Attach an observability logger |
+| Method                            | Purpose                                              |
+| --------------------------------- | ---------------------------------------------------- |
+| `AccessOptions.strict()`          | Factory for strict-mode options                      |
+| `AccessOptions.silent()`          | Factory for silent-mode options                      |
+| `withLogger(IAccessLogger)`       | Attach an observability logger                       |
 | `withEnforcer(ISecurityEnforcer)` | Override the security enforcer (testing or wrapping) |
 
 ### `IAccessLogger`
