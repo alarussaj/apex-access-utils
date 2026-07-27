@@ -22,8 +22,8 @@
     "stripinaccessible"
   ],
   "scripts": {
-    "format": "prettier --write \"**/*.{cls,trigger,apex,js,json,md,xml,yml,yaml}\"",
-    "format:check": "prettier --check \"**/*.{cls,trigger,apex,js,json,md,xml,yml,yaml}\"",
+    "format": "prettier --write \"**/*.{cls,trigger,js,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{cls,trigger,js,json,md,yml,yaml}\"",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -33,7 +33,7 @@
     "prettier-plugin-apex": "^2.2.6"
   },
   "lint-staged": {
-    "*.{cls,trigger,apex,js,json,md,yml,yaml}": "prettier --write"
+    "*.{cls,trigger,js,json,md,yml,yaml}": "prettier --write"
   },
   "engines": {
     "node": ">=18.0.0"

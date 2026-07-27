@@ -3,6 +3,9 @@
 .sf/
 .localdevserver/
 
+# Anonymous Apex scripts (sample scripts, not deployable source)
+scripts/
+
 # Node
 node_modules/
 
