@@ -1,17 +1,36 @@
-# Exclude example classes from package deployment.
-# These are documentation only and reference fictional objects/loggers;
-# they should never be deployed to a scratch org or packaged.
+# Files and folders that should not be deployed to a Salesforce org.
+
+# ── Documentation and project metadata ────────────────────────
+*.md
+LICENSE
+.github/
+.gitignore
+.forceignore
+.prettierignore
+.prettierrc
+package.json
+package-lock.json
+pmd-ruleset.xml
+codecov.yml
+sfdx-project.json
+config/
+
+# Example classes are documentation only and reference fictional
+# objects/loggers; never deploy or package them.
 docs/
 
-# Standard SFDX excludes
+# ── Node ──────────────────────────────────────────────────────
+node_modules/
+
+# ── Test infrastructure ───────────────────────────────────────
+coverage/
+test-results/
 **/jsconfig.json
 **/.eslintrc.json
-**/.prettierrc
-**/.prettierignore
 
-# Profiles and settings that shouldn't be packaged
+# ── Profiles and settings that shouldn't be packaged ──────────
 **/profiles/**
 **/settings/**
 
-# Metadata that commonly causes deploy noise
+# ── Metadata that commonly causes deploy noise ────────────────
 package.xml

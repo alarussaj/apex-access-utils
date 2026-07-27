@@ -1,37 +1,60 @@
-# Salesforce CLI / SFDX
-.sfdx/
+# ── Salesforce CLI ────────────────────────────────────────────
 .sf/
+.sfdx/
 .localdevserver/
 deploy-options.json
 
-# Logs and temp output
+# ── Logs ──────────────────────────────────────────────────────
 *.log
-*.tmp
+logs/
+debug-logs/
 
-# Authentication and secrets — never commit
+# ── Test results ──────────────────────────────────────────────
+test-results/
+test-result-*.xml
+test-result-codecoverage.json
+test-result.json
+
+# ── Code coverage ─────────────────────────────────────────────
+coverage/
+*.lcov
+.nyc_output/
+
+# ── Node ──────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── IDE / editor ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Build output ──────────────────────────────────────────────
+build/
+dist/
+out/
+
+# ── Local environment files ───────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Authentication and secrets — never commit ─────────────────
 **/.sfdx-auth-url*
 **/authFile.json
 **/*.key
 
-# Node / tooling
-node_modules/
-npm-debug.log*
-yarn-error.log*
+# ── PMD ───────────────────────────────────────────────────────
+pmd-output/
+pmd-report.*
 
-# OS / editor cruft
-.DS_Store
-Thumbs.db
-.idea/
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-*.swp
-
-# Build artifacts
-/dist/
-/coverage/
-test-result*.json
-test-result*.xml
-
-# Package install / version scratch files
-package-install.json
+# ── Apex Doc generation ───────────────────────────────────────
+apex-doc/
+docs/generated/

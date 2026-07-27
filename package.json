@@ -2,26 +2,40 @@
   "name": "apex-access-utils",
   "version": "0.1.0",
   "description": "Apex utilities for enforcing object and field-level security with consistent error handling and observability.",
+  "author": "Andrew J La Russa",
+  "license": "MIT",
   "private": true,
-  "scripts": {
-    "prepare": "husky",
-    "format": "prettier --write \"**/*.{cls,trigger,js,json,md,xml,yml,yaml}\"",
-    "format:check": "prettier --check \"**/*.{cls,trigger,js,json,md,xml,yml,yaml}\""
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/alarussaj/apex-access-utils.git"
+    "url": "git+https://github.com/alarussaj/apex-access-utils.git"
   },
-  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alarussaj/apex-access-utils/issues"
+  },
+  "homepage": "https://github.com/alarussaj/apex-access-utils#readme",
+  "keywords": [
+    "salesforce",
+    "apex",
+    "sfdc",
+    "security",
+    "fls",
+    "stripinaccessible"
+  ],
+  "scripts": {
+    "format": "prettier --write \"**/*.{cls,trigger,apex,js,json,md,xml,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{cls,trigger,apex,js,json,md,xml,yml,yaml}\"",
+    "prepare": "husky"
+  },
   "devDependencies": {
     "husky": "^9.1.7",
-    "lint-staged": "^15.2.10",
+    "lint-staged": "^17.0.4",
     "prettier": "^3.3.3",
     "prettier-plugin-apex": "^2.2.6"
   },
   "lint-staged": {
-    "**/*.{cls,trigger,js,json,md,xml,yml,yaml}": [
-      "prettier --write"
-    ]
+    "*.{cls,trigger,apex,js,json,md,yml,yaml}": "prettier --write"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

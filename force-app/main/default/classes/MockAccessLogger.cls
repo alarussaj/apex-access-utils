@@ -59,11 +59,7 @@ public class MockAccessLogger implements IAccessLogger {
 	 * @description Asserts the logger was called exactly once.
 	 */
 	public void verifyCalledOnce() {
-		Assert.areEqual(
-			1,
-			callCount,
-			'Expected logStrippedFields to be called exactly once, was called ' + callCount
-		);
+		Assert.areEqual(1, callCount, 'Expected logStrippedFields to be called exactly once, was called ' + callCount);
 	}
 
 	/**
@@ -100,9 +96,6 @@ public class MockAccessLogger implements IAccessLogger {
 				break;
 			}
 		}
-		Assert.isTrue(
-			found,
-			'Expected logger to have recorded ' + objectApiName + '.' + fieldApiName + ' as stripped'
-		);
+		Assert.isTrue(found, 'Expected logger to have recorded ' + objectApiName + '.' + fieldApiName + ' as stripped');
 	}
 }

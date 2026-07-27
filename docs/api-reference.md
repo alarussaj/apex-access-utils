@@ -89,7 +89,10 @@ public AccessOptions withEnforcer(ISecurityEnforcer enforcer)
 ### Mode enum
 
 ```apex
-public enum Mode { STRICT, SILENT }
+public enum Mode {
+  STRICT,
+  SILENT
+}
 ```
 
 ## IAccessLogger
@@ -98,7 +101,7 @@ Observability hook. Implement to capture stripped fields and no-access events.
 
 ```apex
 public interface IAccessLogger {
-    void logStrippedFields(Map<String, Set<String>> removedFieldsByObject, AccessType requestedAccess);
+  void logStrippedFields(Map<String, Set<String>> removedFieldsByObject, AccessType requestedAccess);
 }
 ```
 
@@ -113,7 +116,7 @@ Seam over `Security.stripInaccessible`.
 
 ```apex
 public interface ISecurityEnforcer {
-    AccessDecision stripInaccessible(AccessType requestedAccess, List<SObject> records);
+  AccessDecision stripInaccessible(AccessType requestedAccess, List<SObject> records);
 }
 ```
 
@@ -139,7 +142,8 @@ public Boolean hasRemovedFields()
 Thrown by `AccessUtils` in strict mode. Extends the standard Apex `Exception`.
 
 ```apex
-public class AccessUtilsException extends Exception {}
+public class AccessUtilsException extends Exception {
+}
 ```
 
 ## Test helpers

@@ -9,6 +9,7 @@ node_modules/
 # Build / coverage output
 dist/
 coverage/
+test-results/
 test-result*.json
 test-result*.xml
 
