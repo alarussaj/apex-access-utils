@@ -6,7 +6,7 @@ Thanks for considering a contribution to **apex-access-utils**. This document de
 
 You'll need:
 
-- [Node.js](https://nodejs.org/) 18 or later
+- [Node.js](https://nodejs.org/) 22.22.1 or later
 - [Salesforce CLI](https://developer.salesforce.com/tools/sfdxcli) (`sf`)
 - A Salesforce **Dev Hub** org (a free [Developer Edition](https://developer.salesforce.com/signup) works)
 
