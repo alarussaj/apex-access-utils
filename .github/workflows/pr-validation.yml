@@ -71,7 +71,7 @@ jobs:
     # Runs for all PRs (including dependabot) — PMD needs no secrets.
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Run PMD
         uses: pmd/pmd-github-action@v2
@@ -88,7 +88,7 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install Salesforce CLI
         run: |
