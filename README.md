@@ -4,7 +4,7 @@
 [![Release](https://github.com/alarussaj/apex-access-utils/actions/workflows/release.yml/badge.svg)](https://github.com/alarussaj/apex-access-utils/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Apex utilities for enforcing object and field-level security with consistent error handling and observability.
+> **Apex utilities for enforcing object and field-level security with consistent error handling and observability.**
 
 `AccessUtils` wraps `Security.stripInaccessible` with:
 
